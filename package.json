@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "amazon-paapi": "^1.0.7",
+    "axios": "^1.14.0",
+    "ebay-node-api": "^2.9.0"
+  }
+}
