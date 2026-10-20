@@ -1,10 +1,10 @@
 # CoreTrenz Platform
 
-A full-stack fashion marketplace I built in April 2026. Shoppers browse partner streetwear brands, search products across marketplaces, design custom clothing, and check out with Stripe. The app also calculates delivery fees, finder fees, and NYC sales tax.
+A full-stack fashion business I started building in April 2026: my own brand, Cornell's Denim, plus partner brands. Shoppers browse partner streetwear brands, search products across marketplaces, design custom clothing, and check out with Stripe. The app also calculates delivery fees, finder fees, and NYC sales tax.
 
 ## Features
 
-- **Partner brand directory.** Streetwear and outdoor brands with links to their stores.
+- **Partner Brands.** 14 brand companies (streetwear, outerwear, footwear, sports) with category filters and "Cornell's Picks." Shop links are tagged so brands can see the shoppers CoreTrenz sends them, and they switch to affiliate links as partnerships come through. Tracker: [BRAND-PARTNERS.md](BRAND-PARTNERS.md).
 - **Marketplace search.** One search box that queries the server's marketplace API (Amazon, eBay, and Shopify connectors).
 - **Design Machine.** Generates clothing design visuals from a text prompt.
 - **Stripe checkout.** Creates Stripe Checkout sessions on the server.
@@ -37,3 +37,9 @@ server/   Express API (routes: marketplace, payments, design, designstudio)
    ```bash
    cd client && npm start
    ```
+
+## Roadmap
+
+- **Phase 1 (now):** Cornell's Denim, plus Partner Brands through affiliate links and creator codes (no money up front)
+- **Phase 2:** Wholesale deals with the brands that sell best; marketplace deals through affiliate programs
+- **Phase 3:** Design Studio, then Delivery

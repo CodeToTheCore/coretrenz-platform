@@ -38,43 +38,41 @@ const MILES_RATE = 2.5;                   // $ per mile for delivery
 // ============================================================
  
 // --- SAMPLE: Partner Store Brands ---
+// --- PARTNER BRANDS ---
+// CoreTrenz partners with brand COMPANIES directly (not stores).
+// To start earning on a brand: join its affiliate program, or make a deal with the brand,
+// then paste the tracking link into affiliateUrl and any shopper discount code into promoCode.
+// Until then, links go to the brand's normal site (no commission). Tracker: BRAND-PARTNERS.md
 const BRANDS = [
-  { id: 1, name: "Cult of Individuality", url: "https://cultofindividuality.com", logo: "COI" },
-  { id: 2, name: "BKYS", url: "https://www.premiumloungeny.com/pages/bkys", logo: "BKYS" },
-  { id: 3, name: "Smoke Rise NY", url: "https://smokeriseny.com", logo: "SR" },
-  { id: 4, name: "North Face", url: "https://www.thenorthface.com", logo: "TNF" },
-  { id: 5, name: "Columbia", url: "https://www.columbia.com", logo: "COL" },
-  { id: 6, name: "Pelle Pelle", url: "https://pellepelle.com", logo: "PP" },
-  { id: 7, name: "New Balance", url: "https://www.newbalance.com", logo: "NB" },
-  { id: 8, name: "Timberland", url: "https://www.timberland.com", logo: "TBL" },
-  { id: 9, name: "NBA Gear", url: "https://store.nba.com", logo: "NBA" },
-  { id: 10, name: "G-Star Raw", url: "https://www.g-star.com", logo: "GSR" },
-  { id: 11, name: "Ewing Athletics", url: "https://ewingathleticsusa.com", logo: "EWG" },
-  { id: 12, name: "Voyage Studio", url: "https://www.voyagestudio.com", logo: "VS" },
-];
- 
-// --- SAMPLE: Partner Stores ---
-const PARTNER_STORES = [
-  {
-    id: "iman",
-    name: "Iman Sports",
-    address: "137th & Broadway, New York City, NY",
-    googleMaps: "https://share.google/70P83inXsOqXusvE4",
-    phone: "(212) 555-0137",
-    hours: "Mon-Sat 9am-8pm, Sun 10am-6pm",
-    brands: [1, 2, 3, 4, 6, 9, 12],
-  },
-  {
-    id: "bluejeans",
-    name: "Blue Jeans NYC",
-    address: "145th & Broadway, New York City, NY",
-    website: "https://bluejeans.nyc",
-    phone: "(212) 555-0145",
-    hours: "Mon-Sat 10am-9pm, Sun 11am-7pm",
-    brands: [5, 7, 8, 10, 11],
-  },
-];
- 
+  { id: 1, name: "Cult of Individuality", category: "Streetwear & Denim", url: "https://cultofindividuality.com", logo: "COI" },
+  { id: 2, name: "BKYS", category: "Streetwear & Denim", url: "https://www.premiumloungeny.com/pages/bkys", logo: "BKYS" },
+  { id: 3, name: "Smoke Rise NY", category: "Streetwear & Denim", url: "https://smokeriseny.com", logo: "SR" },
+  { id: 4, name: "The North Face", category: "Outerwear", url: "https://www.thenorthface.com", logo: "TNF" },
+  { id: 5, name: "Columbia", category: "Outerwear", url: "https://www.columbia.com", logo: "COL" },
+  { id: 6, name: "Pelle Pelle", category: "Outerwear", url: "https://pellepelle.com", logo: "PP" },
+  { id: 7, name: "New Balance", category: "Footwear", url: "https://www.newbalance.com", logo: "NB" },
+  { id: 8, name: "Timberland", category: "Footwear", url: "https://www.timberland.com", logo: "TBL" },
+  { id: 9, name: "NBA Gear", category: "Sports", url: "https://store.nba.com", logo: "NBA" },
+  { id: 10, name: "G-Star Raw", category: "Streetwear & Denim", url: "https://www.g-star.com", logo: "GSR" },
+  { id: 11, name: "Ewing Athletics", category: "Footwear", url: "https://shop.ewingathletics.com", logo: "EWG" },
+  // TODO: confirm Voyage Studio's website. voyagestudio.com wasn't responding on Oct 20, 2026
+  { id: 12, name: "Voyage Studio", category: "Streetwear & Denim", url: "https://www.voyagestudio.com", logo: "VS" },
+  { id: 13, name: "Nike", category: "Footwear", url: "https://www.nike.com", logo: "NIKE" },
+  { id: 14, name: "Avirex", category: "Outerwear", url: "https://www.avirex.com", logo: "AVX" },
+].map(brand => ({ affiliateUrl: null, promoCode: null, note: "", ...brand }));
+
+const BRAND_CATEGORIES = ["All", ...new Set(BRANDS.map(b => b.category))];
+
+// The link every "Shop" button uses. Tagged so the brand's analytics show
+// shoppers came from CoreTrenz, which is proof to show when pitching a partnership.
+const shopLink = (brand) => {
+  const link = new URL(brand.affiliateUrl || brand.url);
+  link.searchParams.set("utm_source", "coretrenz");
+  link.searchParams.set("utm_medium", "referral");
+  link.searchParams.set("utm_campaign", "partner-brands");
+  return link.toString();
+};
+
 // --- SAMPLE: Cornell's Denim Inventory ---
 // Developers: Replace image URLs with real product photos
 // Each item: id, name, brand, price, category, size, color, stock, image(placeholder)
@@ -93,20 +91,21 @@ const CORNELLS_INVENTORY = [
   { id: "cd012", name: "Vintage Wash Tee", brand: "Cornell's Denim", price: 55, category: "T-Shirts", cut: "Oversized", sizes: ["XS","S","M","L","XL","XXL"], colors: ["Vintage White", "Washed Black", "Sage"], stock: 35, image: null, description: "100% ringspun cotton tee with acid wash treatment." },
 ];
  
-// --- SAMPLE: Partner Store Inventory (Iman Sports + Blue Jeans items) ---
+// --- CORNELL'S PICKS: products from partner brands I've been tracking ---
+// These link to the brand's site (not the CoreTrenz cart) until there's a deal with the brand.
 const PARTNER_INVENTORY = [
-  { id: "p001", name: "Cult of Individuality Mona Lisa Tee", brand: "Cult of Individuality", storeId: "iman", price: 89, category: "T-Shirts", cut: "Oversized", sizes: ["S","M","L","XL"], colors: ["Winter White"], stock: 3, image: null },
-  { id: "p002", name: "Cult of Individuality 'CULT' Graphic Tee", brand: "Cult of Individuality", storeId: "iman", price: 85, category: "T-Shirts", cut: "Oversized", sizes: ["S","M","L","XL","XXL"], colors: ["Cream"], stock: 5, image: null },
-  { id: "p003", name: "BKYS Skeleton Guitarist Hoodie", brand: "BKYS", storeId: "iman", price: 125, category: "Hoodies", cut: "Regular Fit", sizes: ["M","L","XL","XXL"], colors: ["Black Glitter"], stock: 4, image: null },
-  { id: "p004", name: "BKYS Skeleton Crate Digger Hoodie", brand: "BKYS", storeId: "iman", price: 125, category: "Hoodies", cut: "Regular Fit", sizes: ["M","L","XL"], colors: ["Black Glitter"], stock: 2, image: null },
-  { id: "p005", name: "Smoke Rise Glory Tiger Hoodie", brand: "Smoke Rise NY", storeId: "iman", price: 148, category: "Hoodies", cut: "Cropped / Regular", sizes: ["M","L","XL","XXL"], colors: ["Rust Red"], stock: 3, image: null },
-  { id: "p006", name: "Smoke Rise Metal Graphic Jacket", brand: "Smoke Rise NY", storeId: "iman", price: 195, category: "Jackets", cut: "Regular Fit", sizes: ["M","L","XL"], colors: ["Black/Red"], stock: 2, image: null },
-  { id: "p007", name: "NY Knicks Satin Bomber Jacket", brand: "NBA Gear", storeId: "iman", price: 185, category: "Jackets", cut: "Regular Fit", sizes: ["M","L","XL","XXL"], colors: ["Black/Gold"], stock: 4, image: null },
-  { id: "p008", name: "Chicago Bulls Zip-Up Hoodie", brand: "NBA Gear", storeId: "iman", price: 95, category: "Hoodies", cut: "Regular Fit", sizes: ["S","M","L","XL","XXL"], colors: ["Red"], stock: 6, image: null },
-  { id: "p009", name: "NY Yankees Varsity Jacket", brand: "NBA Gear", storeId: "iman", price: 165, category: "Jackets", cut: "Regular Fit", sizes: ["M","L","XL","XXL"], colors: ["Navy/White"], stock: 5, image: null },
-  { id: "p010", name: "Columbia Watertight Rain Jacket", brand: "Columbia", storeId: "bluejeans", price: 120, category: "Jackets", cut: "Regular Fit", sizes: ["S","M","L","XL","XXL"], colors: ["Charcoal", "Green"], stock: 7, image: null },
-  { id: "p011", name: "North Face Mountain Jacket", brand: "North Face", storeId: "bluejeans", price: 220, category: "Jackets", cut: "Regular Fit", sizes: ["S","M","L","XL"], colors: ["Red/Black"], stock: 3, image: null },
-  { id: "p012", name: "Columbia Puffer Jacket Shiny", brand: "Columbia", storeId: "bluejeans", price: 189, category: "Jackets", cut: "Puffy", sizes: ["S","M","L","XL","XXL"], colors: ["Navy","Black"], stock: 6, image: null },
+  { id: "p001", name: "Cult of Individuality Mona Lisa Tee", brand: "Cult of Individuality", price: 89, category: "T-Shirts", cut: "Oversized", sizes: ["S","M","L","XL"], colors: ["Winter White"], stock: 3, image: null },
+  { id: "p002", name: "Cult of Individuality 'CULT' Graphic Tee", brand: "Cult of Individuality", price: 85, category: "T-Shirts", cut: "Oversized", sizes: ["S","M","L","XL","XXL"], colors: ["Cream"], stock: 5, image: null },
+  { id: "p003", name: "BKYS Skeleton Guitarist Hoodie", brand: "BKYS", price: 125, category: "Hoodies", cut: "Regular Fit", sizes: ["M","L","XL","XXL"], colors: ["Black Glitter"], stock: 4, image: null },
+  { id: "p004", name: "BKYS Skeleton Crate Digger Hoodie", brand: "BKYS", price: 125, category: "Hoodies", cut: "Regular Fit", sizes: ["M","L","XL"], colors: ["Black Glitter"], stock: 2, image: null },
+  { id: "p005", name: "Smoke Rise Glory Tiger Hoodie", brand: "Smoke Rise NY", price: 148, category: "Hoodies", cut: "Cropped / Regular", sizes: ["M","L","XL","XXL"], colors: ["Rust Red"], stock: 3, image: null },
+  { id: "p006", name: "Smoke Rise Metal Graphic Jacket", brand: "Smoke Rise NY", price: 195, category: "Jackets", cut: "Regular Fit", sizes: ["M","L","XL"], colors: ["Black/Red"], stock: 2, image: null },
+  { id: "p007", name: "NY Knicks Satin Bomber Jacket", brand: "NBA Gear", price: 185, category: "Jackets", cut: "Regular Fit", sizes: ["M","L","XL","XXL"], colors: ["Black/Gold"], stock: 4, image: null },
+  { id: "p008", name: "Chicago Bulls Zip-Up Hoodie", brand: "NBA Gear", price: 95, category: "Hoodies", cut: "Regular Fit", sizes: ["S","M","L","XL","XXL"], colors: ["Red"], stock: 6, image: null },
+  { id: "p009", name: "NY Yankees Varsity Jacket", brand: "NBA Gear", price: 165, category: "Jackets", cut: "Regular Fit", sizes: ["M","L","XL","XXL"], colors: ["Navy/White"], stock: 5, image: null },
+  { id: "p010", name: "Columbia Watertight Rain Jacket", brand: "Columbia", price: 120, category: "Jackets", cut: "Regular Fit", sizes: ["S","M","L","XL","XXL"], colors: ["Charcoal", "Green"], stock: 7, image: null },
+  { id: "p011", name: "North Face Mountain Jacket", brand: "The North Face", price: 220, category: "Jackets", cut: "Regular Fit", sizes: ["S","M","L","XL"], colors: ["Red/Black"], stock: 3, image: null },
+  { id: "p012", name: "Columbia Puffer Jacket Shiny", brand: "Columbia", price: 189, category: "Jackets", cut: "Puffy", sizes: ["S","M","L","XL","XXL"], colors: ["Navy","Black"], stock: 6, image: null },
 ];
  
 // --- SAMPLE: Third-Party Marketplace Items (Amazon/eBay/Shopify mock) ---
@@ -438,7 +437,7 @@ const BrandTicker = () => {
     <div style={{ overflow: "hidden", background: "#e85d04", padding: "8px 0" }}>
       <div style={{ display: "flex", gap: 32, transform: `translateX(${offset}px)`, whiteSpace: "nowrap", transition: "transform 0.03s linear" }}>
         {[...BRANDS, ...BRANDS].map((brand, i) => (
-          <a key={i} href={brand.url} target="_blank" rel="noopener noreferrer"
+          <a key={i} href={shopLink(brand)} target="_blank" rel="noopener noreferrer"
             style={{ color: "white", fontWeight: 700, fontSize: 12, textDecoration: "none", letterSpacing: 1, opacity: 0.9 }}>
             {brand.name.toUpperCase()} •
           </a>
@@ -1041,7 +1040,7 @@ const HomePage = ({ onAddToCart, onSignup }) => {
           Featured Items <span style={{ color: "#e85d04" }}>🔥</span>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 16 }}>
-          {[...CORNELLS_INVENTORY.slice(0, 4), ...PARTNER_INVENTORY.slice(0, 4)].map(item => (
+          {CORNELLS_INVENTORY.slice(0, 8).map(item => (
             <ProductCard key={item.id} item={item} onAddToCart={onAddToCart} />
           ))}
         </div>
@@ -1137,90 +1136,76 @@ const CornellsDenimPage = ({ onAddToCart }) => {
 };
  
 // PAGE: Partner Stores
-const PartnerStoresPage = ({ onAddToCart }) => {
-  const [activeStore, setActiveStore] = useState("all");
+// PAGE: Partner Brands (brand companies CoreTrenz partners with)
+const PartnerBrandsPage = () => {
+  const [category, setCategory] = useState("All");
   const [searchQ, setSearchQ] = useState("");
- 
-  const items = PARTNER_INVENTORY.filter(item =>
-    (activeStore === "all" || item.storeId === activeStore) &&
-    item.name.toLowerCase().includes(searchQ.toLowerCase())
+
+  const shown = BRANDS.filter(brand =>
+    (category === "All" || brand.category === category) &&
+    brand.name.toLowerCase().includes(searchQ.toLowerCase())
   );
- 
+  // Cornell's picks for a brand, matched by brand name
+  const picksFor = (brand) => PARTNER_INVENTORY.filter(item => item.brand === brand.name);
+
   return (
     <div>
       {/* Header */}
       <div style={{ background: "linear-gradient(135deg, #0d0d1a, #1a0d2e)", padding: "32px 24px" }}>
-        <div style={{ fontSize: 24, fontWeight: 800, color: "white", marginBottom: 6 }}>Partner Store Inventory</div>
-        <div style={{ fontSize: 13, color: "#888" }}>Real-time stock from our Harlem partners. Check before you travel.</div>
+        <div style={{ fontSize: 24, fontWeight: 800, color: "white", marginBottom: 6 }}>Partner Brands</div>
+        <div style={{ fontSize: 13, color: "#888" }}>Brands we wear and trust. Shop them straight from the brand.</div>
       </div>
- 
-      {/* Store selector */}
+
+      {/* Category filter + search */}
       <div style={{ padding: "16px 24px", background: "#111", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-        <div style={{ display: "flex", gap: 12, marginBottom: 16, flexWrap: "wrap" }}>
-          {[{ id: "all", name: "All Stores" }, ...PARTNER_STORES].map(store => (
-            <button key={store.id} onClick={() => setActiveStore(store.id)} style={{
+        <div style={{ display: "flex", gap: 10, marginBottom: 12, flexWrap: "wrap" }}>
+          {BRAND_CATEGORIES.map(c => (
+            <button key={c} onClick={() => setCategory(c)} aria-pressed={category === c} style={{
               padding: "8px 18px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.15)",
-              background: activeStore === store.id ? "#e85d04" : "#1a1a2e",
-              color: "white", cursor: "pointer", fontSize: 13, fontWeight: activeStore === store.id ? 700 : 400,
-            }}>{store.name || store.id}</button>
+              background: category === c ? "#e85d04" : "#1a1a2e",
+              color: "white", cursor: "pointer", fontSize: 13, fontWeight: category === c ? 700 : 400,
+            }}>{c}</button>
           ))}
         </div>
- 
-        {/* Store info cards */}
-        {PARTNER_STORES.filter(s => activeStore === "all" || s.id === activeStore).map(store => (
-          <div key={store.id} style={{ background: "#1a1a2e", borderRadius: 10, padding: 16, marginBottom: 12, border: "1px solid rgba(255,255,255,0.06)" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
-              <div>
-                <div style={{ fontWeight: 700, color: "white", fontSize: 15 }}>{store.name}</div>
-                <div style={{ fontSize: 12, color: "#888", marginTop: 4 }}>📍 {store.address}</div>
-                <div style={{ fontSize: 12, color: "#888" }}>📞 {store.phone} · {store.hours}</div>
-              </div>
-              <div style={{ display: "flex", gap: 8 }}>
-                {store.googleMaps && <a href={store.googleMaps} target="_blank" rel="noopener noreferrer" style={{ padding: "6px 14px", background: "#e85d04", color: "white", borderRadius: 8, fontSize: 11, fontWeight: 700, textDecoration: "none" }}>Get Directions</a>}
-                {store.website && <a href={store.website} target="_blank" rel="noopener noreferrer" style={{ padding: "6px 14px", background: "#1e3a5f", color: "#4fc3f7", borderRadius: 8, fontSize: 11, fontWeight: 700, textDecoration: "none" }}>Website</a>}
-              </div>
-            </div>
-            {/* Brands carried */}
-            <div style={{ marginTop: 10, display: "flex", gap: 6, flexWrap: "wrap" }}>
-              {BRANDS.filter(b => store.brands?.includes(b.id)).map(b => (
-                <a key={b.id} href={b.url} target="_blank" rel="noopener noreferrer" style={{ background: "rgba(232,93,4,0.15)", color: "#e85d04", fontSize: 10, padding: "3px 10px", borderRadius: 20, border: "1px solid rgba(232,93,4,0.3)", textDecoration: "none", fontWeight: 600 }}>
-                  {b.name}
-                </a>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
- 
-      {/* Search */}
-      <div style={{ padding: "12px 24px", background: "#0d0d1a" }}>
         <input value={searchQ} onChange={e => setSearchQ(e.target.value)}
-          placeholder="Search partner inventory..."
+          placeholder="Search brands..." aria-label="Search brands"
           style={{ width: "100%", background: "#1a1a2e", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 8, padding: "10px 14px", color: "white", fontSize: 13, boxSizing: "border-box" }} />
       </div>
- 
-      {/* Product grid */}
-      <div style={{ padding: "16px 24px", display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(210px, 1fr))", gap: 18 }}>
-        {items.map(item => <ProductCard key={item.id} item={item} onAddToCart={onAddToCart} />)}
-      </div>
- 
-      {/* Brand links section */}
-      <div style={{ padding: "32px 24px", background: "#1a1a2e", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-        <div style={{ fontSize: 16, fontWeight: 700, color: "white", marginBottom: 16 }}>Shop Brands Directly</div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: 10 }}>
-          {BRANDS.map(brand => (
-            <a key={brand.id} href={brand.url} target="_blank" rel="noopener noreferrer" style={{
-              display: "flex", alignItems: "center", gap: 8, background: "#111", borderRadius: 8, padding: "10px 12px",
-              border: "1px solid rgba(255,255,255,0.08)", textDecoration: "none", transition: "border-color 0.2s",
-            }}
-              onMouseEnter={e => e.currentTarget.style.borderColor = "#e85d04"}
-              onMouseLeave={e => e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"}
-            >
-              <div style={{ width: 32, height: 32, background: "#1a1a2e", borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 9, color: "#e85d04", fontWeight: 800 }}>{brand.logo}</div>
-              <div style={{ fontSize: 11, color: "#ccc", fontWeight: 600, lineHeight: 1.3 }}>{brand.name}</div>
+
+      {/* Brand cards */}
+      <div style={{ padding: "20px 24px", display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 16 }}>
+        {shown.map(brand => (
+          <div key={brand.id} style={{ background: "#1a1a2e", borderRadius: 12, padding: 16, border: "1px solid rgba(255,255,255,0.08)", display: "flex", flexDirection: "column", gap: 10 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <div aria-hidden="true" style={{ width: 44, height: 44, background: "#111", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, color: "#e85d04", fontWeight: 800 }}>{brand.logo}</div>
+              <div>
+                <div style={{ fontWeight: 700, color: "white", fontSize: 15 }}>{brand.name}</div>
+                <div style={{ fontSize: 12, color: "#888" }}>{brand.category}</div>
+              </div>
+            </div>
+            {brand.note && <div style={{ fontSize: 12, color: "#ccc", fontStyle: "italic" }}>"{brand.note}"</div>}
+            {brand.promoCode && <div style={{ fontSize: 12, color: "#4ade80" }}>Use code <strong>{brand.promoCode}</strong></div>}
+            {picksFor(brand).length > 0 && (
+              <div>
+                <div style={{ fontSize: 11, color: "#e85d04", fontWeight: 700, letterSpacing: 1, marginBottom: 4 }}>CORNELL'S PICKS</div>
+                <ul style={{ margin: 0, paddingLeft: 16, color: "#ccc", fontSize: 12, lineHeight: 1.6 }}>
+                  {picksFor(brand).map(item => <li key={item.id}>{item.name}</li>)}
+                </ul>
+              </div>
+            )}
+            <a href={shopLink(brand)} target="_blank"
+              rel={brand.affiliateUrl ? "sponsored noopener noreferrer" : "noopener noreferrer"}
+              style={{ marginTop: "auto", textAlign: "center", padding: "9px 14px", background: "#e85d04", color: "white", borderRadius: 8, fontSize: 13, fontWeight: 700, textDecoration: "none" }}>
+              Shop {brand.name} ↗
             </a>
-          ))}
-        </div>
+          </div>
+        ))}
+        {shown.length === 0 && <div style={{ color: "#888", fontSize: 13 }}>No brands match your search.</div>}
+      </div>
+
+      {/* Affiliate disclosure (required by the FTC for affiliate links) */}
+      <div style={{ padding: "0 24px 32px", fontSize: 11, color: "#777" }}>
+        Some of these links may be affiliate links. If you buy through them, CoreTrenz may earn a small commission at no extra cost to you.
       </div>
     </div>
   );
@@ -2223,7 +2208,7 @@ export default function CoreTrenzApp() {
   const navTabs = [
     { id: "home", label: "Home" },
     { id: "cornells", label: "Cornell's Denim" },
-    { id: "partners", label: "Partner Stores" },
+    { id: "partners", label: "Partner Brands" },
     { id: "marketplace", label: "Marketplace" },
     { id: "delivery", label: "Delivery" },
     { id: "studio", label: "Design Studio" },
@@ -2235,7 +2220,7 @@ export default function CoreTrenzApp() {
     switch (activeTab) {
       case "home": return <HomePage onAddToCart={handleAddToCart} onSignup={setSignupModal} />;
       case "cornells": return <CornellsDenimPage onAddToCart={handleAddToCart} />;
-      case "partners": return <PartnerStoresPage onAddToCart={handleAddToCart} />;
+      case "partners": return <PartnerBrandsPage />;
       case "marketplace": return <MarketplacePage onAddToCart={handleAddToCart} />;
       case "delivery": return <DeliveryPage onCarrierSignup={() => setSignupModal("carrier")} onCustomerSignup={() => setSignupModal("customer")} />;
       case "studio": return <DesignStudioPage />;
@@ -2340,7 +2325,7 @@ export default function CoreTrenzApp() {
         {/* Developer footer note */}
         <div style={{ marginTop: 16, padding: 12, background: "#111", borderRadius: 8, border: "1px solid rgba(255,255,255,0.04)" }}>
           <div style={{ fontSize: 10, color: "#333", lineHeight: 1.6 }}>
-            <strong style={{ color: "#555" }}>Developer Notes:</strong> Business constants (commissions, fees, tax rates) are at the top of CoreTrenz.jsx. All components are labeled with COMPONENT:, STATE:, HANDLER:, and API: comments. To swap dummy data: update CORNELLS_INVENTORY, PARTNER_INVENTORY, MARKETPLACE_ITEMS arrays. For real API integration: search for "API:" comments throughout. Delivery fee logic: calcDeliveryFee(). Discount logic: calcDiscountSavings(). Tax rate: TAX_RATE constant.
+            <strong style={{ color: "#555" }}>Developer Notes:</strong> Business constants (commissions, fees, tax rates) are at the top of CoreTrenz.jsx. All components are labeled with COMPONENT:, STATE:, HANDLER:, and API: comments. To swap dummy data: update CORNELLS_INVENTORY and MARKETPLACE_ITEMS. Partner brands and affiliate links: BRANDS (see BRAND-PARTNERS.md). For real API integration: search for "API:" comments throughout. Delivery fee logic: calcDeliveryFee(). Discount logic: calcDiscountSavings(). Tax rate: TAX_RATE constant.
           </div>
         </div>
       </footer>
