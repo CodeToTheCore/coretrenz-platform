@@ -1021,7 +1021,7 @@ const HomePage = ({ onAddToCart, onSignup }) => {
           { icon: "🤖", title: "AI Discount Bot", desc: "Finds hidden discounts across 8+ platforms and shares savings with you." },
           { icon: "🚀", title: "Fast Delivery", desc: "CoreTrenz carriers on bike, car & transit. Same-day options available." },
           { icon: "👕", title: "Cornell's Denim", desc: "Custom designed streetwear built for NYC trendsetters." },
-          { icon: "📦", title: "Partner Stores", desc: "Iman Sports & Blue Jeans NYC inventory — check stock before you go." },
+          { icon: "🏷️", title: "Partner Brands", desc: "14 brands we trust, from Nike and Timberland to NYC streetwear." },
           { icon: "✂️", title: "Design Studio", desc: "Customize your own clothes with print & embroidery machine export." },
           { icon: "🌐", title: "Marketplace", desc: "Browse Amazon, eBay, Shopify & more — all in one place." },
         ].map(f => (
@@ -1127,14 +1127,13 @@ const CornellsDenimPage = ({ onAddToCart }) => {
       <div style={{ margin: "0 24px 40px", padding: 20, background: "#1a1a2e", borderRadius: 12, border: "1px solid rgba(201,168,76,0.2)" }}>
         <div style={{ fontWeight: 700, color: "#c9a84c", marginBottom: 8 }}>Item Out of Stock?</div>
         <div style={{ fontSize: 13, color: "#888", lineHeight: 1.6 }}>
-          We keep spares on deck, but if something's sold out — we can arrange to order it with standard shipping. Some items may still be available at our partner stores: Iman Sports (137th & Broadway) or Blue Jeans NYC (145th & Broadway). Check the Partner Stores tab for locations.
+          We keep spares on deck, but if something's sold out — we can arrange to order it with standard shipping.
         </div>
       </div>
     </div>
   );
 };
  
-// PAGE: Partner Stores
 // PAGE: Partner Brands (brand companies CoreTrenz partners with)
 const PartnerBrandsPage = () => {
   const [category, setCategory] = useState("All");
@@ -2030,7 +2029,7 @@ const exportBtn = { padding: "5px", background: "#e85d04", color: "#fff", border
 // PAGE: Inventory Analytics Scanner
 const AnalyticsPage = () => {
   const [uploadedFile, setUploadedFile] = useState(null);
-  const [activeStore, setActiveStore] = useState("imanSports");
+  const [activeStore, setActiveStore] = useState("cornellsDenim");
  
   const data = INVENTORY_ANALYTICS[activeStore];
  
@@ -2043,7 +2042,7 @@ const AnalyticsPage = () => {
  
       {/* Store selector */}
       <div style={{ padding: "16px 24px", background: "#111", display: "flex", gap: 10 }}>
-        {[["imanSports", "Iman Sports"], ["blueJeans", "Blue Jeans NYC"], ["cornellsDenim", "Cornell's Denim"]].map(([id, name]) => (
+        {[["cornellsDenim", "Cornell's Denim"]].map(([id, name]) => (
           <button key={id} onClick={() => setActiveStore(id)} style={{
             padding: "8px 16px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.15)",
             background: activeStore === id ? "#e85d04" : "#1a1a2e", color: "white", cursor: "pointer", fontSize: 13, fontWeight: activeStore === id ? 700 : 400,
@@ -2295,7 +2294,7 @@ export default function CoreTrenzApp() {
             </p>
           </div>
           {[
-            { heading: "Shop", links: ["Cornell's Denim", "Partner Stores", "Marketplace", "Trending"] },
+            { heading: "Shop", links: ["Cornell's Denim", "Partner Brands", "Marketplace", "Trending"] },
             { heading: "Delivery", links: ["Become a Carrier", "Get Delivered", "Track Order", "Delivery Zones"] },
             { heading: "Help", links: ["About Us", "Returns Policy", "Contact", "FAQ"] },
           ].map(col => (
