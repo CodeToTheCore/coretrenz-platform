@@ -17,7 +17,9 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { loadStripe } from "@stripe/stripe-js"; 
 
-const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
+// Checkout is off until a publishable key is set, so only load Stripe when one exists
+const stripeKey = process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY;
+const stripePromise = stripeKey ? loadStripe(stripeKey) : Promise.resolve(null);
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
  
 // ============================================================
